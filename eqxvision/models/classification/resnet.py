@@ -188,6 +188,7 @@ class ResNet(eqx.Module):
         block: Type[Union["_ResNetBasicBlock", "_ResNetBottleneck"]],
         layers: List[int],
         num_classes: int = 1000,
+        num_channels: int = 3,
         groups: int = 1,
         width_per_group: int = 64,
         replace_stride_with_dilation: List[bool] = None,
@@ -201,6 +202,8 @@ class ResNet(eqx.Module):
         - `layers`: A list containing number of `blocks` at different levels
         - `num_classes`: Number of classes in the classification task.
                         Also controls the final output shape `(num_classes,)`. Defaults to `1000`
+        - `num_channels`: Number of channels of the input data.
+                        Also controls the input shape `(b, num_channels, h, w)`. Defaults to `3`
         - `groups`: Number of groups to form along the feature depth. Defaults to `1`
         - `width_per_group`: Increases width of `block` by a factor of `width_per_group/64`.
         Defaults to `64`
@@ -241,7 +244,7 @@ class ResNet(eqx.Module):
         self.groups = groups
         self.base_width = width_per_group
         self.conv1 = nn.Conv2d(
-            3,
+            num_channels,
             self.inplanes,
             kernel_size=7,
             stride=2,
